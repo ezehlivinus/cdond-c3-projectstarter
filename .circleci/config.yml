@@ -15,6 +15,7 @@ commands:
             - slack/notify:
                 event: fail
                 message: '$(env.CIRCLE_JOB) failed on $(env.CIRCLE_BRANCH) $(env.CIRCLE_BUILD_URL)'
+                channel: '$(env.SLACK_DEFAULT_CHANNEL)'
                 template: basic_fail_1
     
    
