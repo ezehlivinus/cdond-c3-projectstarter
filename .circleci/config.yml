@@ -5,10 +5,19 @@ orbs:
 
 commands:
   notify-slack:
-   - slack/notify:
-      event: fail
-      mentions: '@EngineeringTeam'
-      template: basic_fail_1
+    description: Notify Slack channel of a error or failure.
+    parameters:
+      # Add parameter here
+    steps:
+      - run:
+          name: Notify Slack
+          command: |
+            - slack/notify:
+                event: fail
+                message: '$(env.CIRCLE_JOB) failed on $(env.CIRCLE_BRANCH) $(env.CIRCLE_BUILD_URL)'
+                template: basic_fail_1
+    
+   
             
 jobs:
   build-frontend:
