@@ -97,8 +97,6 @@ jobs:
             npm install
             npm audit fix --force
             npm audit fix --audit-level=critical
-            return 1
-      - notify-slack
 
   scan-backend:
     docker:
@@ -114,8 +112,7 @@ jobs:
             npm install
             npm audit fix --force
             npm audit fix --audit-level=critical
-            return 1
-      - notify-slack
+
 
 workflows:
   default:
