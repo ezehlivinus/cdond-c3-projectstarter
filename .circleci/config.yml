@@ -31,8 +31,6 @@ commands:
           command: |
             aws cloudformation delete-stack --stack-name udapeople-backend-${WORKFLOW_ID:0:7}
             aws cloudformation delete-stack --stack-name udapeople-frontend-${WORKFLOW_ID:0:7}
-    
-   
             
 jobs:
   build-frontend:
