@@ -29,7 +29,7 @@ commands:
           name: Destroy environments
           when: on_fail
           command: |
-            !Join [ "-", [ "aws cloudformation delete-stack --stack-name udapeople-backend", "\<\<parameters.WORKFLOW_ID:0:7\>\>" ] ]
+            aws cloudformation delete-stack --stack-name udapeople-backend-\<\<parameters.WORKFLOW_ID:0:7\>\>
             aws cloudformation delete-stack --stack-name udapeople-frontend-\<\<parameters.WORKFLOW_ID:0:7\>\>
             
 jobs:
