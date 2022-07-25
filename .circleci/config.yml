@@ -26,7 +26,7 @@ commands:
         type: string
     steps:
       - run:
-          name: Destroy environments
+          name: Destroy environments due to failure
           when: on_fail
           command: |
             export WORKFLOW_ID=<< parameters.WORKFLOW_ID >>
@@ -164,7 +164,6 @@ jobs:
           root: ~/
           paths: 
             - project/.circleci/ansible/inventory.txt
-      - run: return 1
       - destroy-environment:
           WORKFLOW_ID: ${CIRCLE_WORKFLOW_ID:0:7}
             
@@ -172,18 +171,18 @@ jobs:
 workflows:
   default:
     jobs:
-      # - build-frontend
-      # - build-backend
-      # - test-frontend:
-      #     requires: [build-frontend]
-      # - test-backend:
-      #     requires: [build-backend]
-      # - scan-backend:
-      #     requires: [build-backend]
-      # - scan-frontend:
-      #     requires: [build-frontend]
+      - build-frontend
+      - build-backend
+      - test-frontend:
+          requires: [build-frontend]
+      - test-backend:
+          requires: [build-backend]
+      - scan-backend:
+          requires: [build-backend]
+      - scan-frontend:
+          requires: [build-frontend]
       - deploy-infrastructure
-          # requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
           # filters:
           #   branches:
           #     only: [test-feature-branch]
