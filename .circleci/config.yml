@@ -151,13 +151,14 @@ jobs:
       - run:
           name: Fetch and Add the created EC2 instance public IP to the ansible inventory file
           command: |
-            aws ec2 describe-instances \
+            echo aws ec2 describe-instances \
               --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --query "Reservations[*].Instances[*].PublicIpAddress" \
               --output text \
               --region us-east-1 \
               >> .circleci/ansible/inventory.txt
-            cat ./ansible/inventory.txt
+            cat .circleci/ansible/inventory.txt
+            echo CIRCLE_WORKFLOW_ID=${CIRCLE_WORKFLOW_ID:0:7}
       - persist_to_workspace:
           root: ~/
           paths: 
