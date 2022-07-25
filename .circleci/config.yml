@@ -17,6 +17,21 @@ commands:
                 message: '$(env.CIRCLE_JOB) failed on $(env.CIRCLE_BRANCH) $(env.CIRCLE_BUILD_URL)'
                 channel: '#general'
                 template: basic_fail_1
+
+  destroy-environment:
+    description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
+    parameters:
+      WORKFLOW_ID:
+        description: The workflow ID.
+        type: string
+        required: true
+    steps:
+      - run:
+          name: Destroy environments
+          when: on_fail
+          command: |
+            aws cloudformation delete-stack --stack-name udapeople-backend-${WORKFLOW_ID:0:7}
+            aws cloudformation delete-stack --stack-name udapeople-frontend-${WORKFLOW_ID:0:7}
     
    
             
@@ -113,6 +128,48 @@ jobs:
             npm audit fix --force
             npm audit fix --audit-level=critical
 
+  deploy-infrastructure:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run: yum install -y tar gzip
+      - run:
+          name: Deploy backend infrastructure
+          command: |
+            aws cloudformation deploy \
+              --template-file .circleci/files/backend.yml \
+              --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  \
+              --tags project=udapeople
+      
+      - run:
+          name: Ensure front-end infrastructure exist---Deploy frontend infrastructure
+          command: |
+            aws cloudformation deploy \
+              --template-file .circleci/files/frontend.yml \
+              --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  \
+              --tags project=udapeople
+      - run:
+          name: Fetch and Add the created EC2 instance public IP to the ansible inventory file
+          command: |
+            aws ec2 describe-instances \
+              --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --query "Reservations[*].Instances[*].PublicIpAddress" \
+              --output text \
+              --region us-east-1 \
+              >> .circleci/ansible/inventory.txt
+            cat ./ansible/inventory.txt
+      - persist_to_workspace:
+          root: ~/
+          paths: 
+            - project/.circleci/ansible/inventory.txt
+      - destroy-environment:
+          WORKFLOW_ID: ${CIRCLE_WORKFLOW_ID:0:7}
+            
+
+
 
 workflows:
   default:
@@ -127,11 +184,11 @@ workflows:
           requires: [build-backend]
       - scan-frontend:
           requires: [build-frontend]
-      # - deploy-infrastructure:
-      #     requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-      #     filters:
-      #       branches:
-      #         only: [test-feature-branch]
+      - deploy-infrastructure:
+          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+          filters:
+            branches:
+              only: [test-feature-branch]
       # - configure-infrastructure:
       #     requires: [deploy-infrastructure]
       # - run-migrations:
