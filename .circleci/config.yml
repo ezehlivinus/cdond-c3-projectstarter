@@ -30,8 +30,8 @@ commands:
           when: on_fail
           command: |
             export WORKFLOW_ID=<< parameters.WORKFLOW_ID >>
-            aws cloudformation delete-stack --stack-name udapeople-backend-${$WORKFLOW_ID}
-            aws cloudformation delete-stack --stack-name udapeople-frontend-${$WORKFLOW_ID}
+            aws cloudformation delete-stack --stack-name udapeople-backend-${WORKFLOW_ID}
+            aws cloudformation delete-stack --stack-name udapeople-frontend-${WORKFLOW_ID}
             
 jobs:
   build-frontend:
@@ -133,7 +133,7 @@ jobs:
       - checkout
       - run: yum install -y tar gzip
       - run:
-          name: Deploy backend infrastructure
+          name: Ensure back-end infrastructure exists --- Deploy backend infrastructure
           command: |
             aws cloudformation deploy \
               --template-file .circleci/files/backend.yml \
