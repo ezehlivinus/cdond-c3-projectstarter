@@ -24,7 +24,6 @@ commands:
       WORKFLOW_ID:
         description: The workflow ID.
         type: string
-        required: true
     steps:
       - run:
           name: Destroy environments
