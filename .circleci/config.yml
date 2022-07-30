@@ -183,6 +183,7 @@ jobs:
           name: Install dependencies
           command: |
             apk add --update ansible
+            pip3 install awscli
       # - run: 
       #     name: Configure Install other dependencies
       #     command: |
@@ -192,7 +193,7 @@ jobs:
           name: Configure server
           command: |
             cd .circleci/ansible
-            ansible-playbook -i inventory.yml configure-server.yml
+            ansible-playbook -i inventory.txt configure-server.yml
       # Here's where you will add some code to rollback on failure
       - destroy-environment:
           WORKFLOW_ID: ${CIRCLE_WORKFLOW_ID:0:7}
