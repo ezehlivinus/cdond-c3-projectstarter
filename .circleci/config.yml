@@ -177,7 +177,7 @@ jobs:
           fingerprints: ['60:60:a5:39:23:92:40:ed:5f:c7:8b:c3:9c:57:fb:64']
       # attach workspace to the instance
       - attach_workspace:
-          name: ansible/circleci directory/workspace
+          name: Attach ansible/circleci directory/workspace
           at: ~/
       - run:
           name: Install dependencies
