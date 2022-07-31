@@ -247,6 +247,8 @@ jobs:
               curl https://kvdb.io/Y7mPFggX4RtGg4v2iPmjf5/migration_${WORKFLOW_ID}  -d '1'
               curl https://kvdb.io/Y7mPFggX4RtGg4v2iPmjf5/test_one  -d 'one'
               echo '$WORKFLOW_ID it worked'
+            else
+              echo "Number is Odd"
             fi
             curl https://kvdb.io/Y7mPFggX4RtGg4v2iPmjf5/test_two  -d 'two'
             echo '${WORKFLOW_ID} maybe it worked-_${WORKFLOW_ID}'
