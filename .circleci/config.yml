@@ -256,7 +256,7 @@ jobs:
             # your code here
             yum install -y tar gzip
             yum install -y awscli
-
+            yum install wget
             wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
             ls
             yum install epel-release-latest-7.noarch.rpm
