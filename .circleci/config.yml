@@ -230,8 +230,9 @@ jobs:
             cd backend
             npm install
             echo 'Now running migrations'
-            npm run migrations > migrations_dump.txt
-            cat migrations_dump.txt
+            npm run migrations
+            # npm run migrations > migrations_dump.txt
+            # cat migrations_dump.txt
             echo 'Migrations done'
       - run:
           name: Send migration results to kvdb.io
@@ -316,6 +317,34 @@ jobs:
       - destroy-environment:
           WORKFLOW_ID: ${CIRCLE_WORKFLOW_ID:0:7}    
           
+  deploy-backend:
+    docker:
+      # Docker image here that supports Ansible
+      - image: cimg/python:3.10.5-node:14.0.0-alpine
+    steps:
+      # Checkout code from git
+      - checkout
+      # Add ssh keys with fingerprint
+      - add_ssh_keys:
+          fingerprints: ['60:60:a5:39:23:92:40:ed:5f:c7:8b:c3:9c:57:fb:64']
+      # attach workspace
+      - attach_workspace:
+          name: Attach ansible/circleci directory/workspace
+          at: ~/
+      - run:
+          name: Install dependencies
+          command: |
+            # your code here
+            apk add --update ansible
+            yum install -y tar gzip
+            pip3 install awscli
+            yum install -y wget
+      - run:
+          name: Deploy backend
+          command: |
+            # your code here
+      # Here's where you will add some code to rollback on failure  
+
 
 workflows:
   default:
