@@ -229,14 +229,20 @@ jobs:
             npm install
             echo 'Now running migrations'
             npm run migrations > migrations_dump.txt
+            cat migrations_dump.txt
+            echo 'Migrations done'
       - run:
           name: Send migration results to kvdb.io
           command: |
             if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
             then
-              # If you are using kvdb.io, generate the bucket ID "9GE4jRtKznmVKRfvdBABBe" in your local terminal first
-              curl https://kvdb.io/Y7mPFggX4RtGg4v2iPmjf5/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
+                # If you are using kvdb.io, generate the bucket ID "9GE4jRtKznmVKRfvdBABBe" in your local terminal first
+                curl https://kvdb.io/Y7mPFggX4RtGg4v2iPmjf5/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
             fi
+      - run:
+          name: Return migration results to CircleCI
+          command: |
+            curl https://kvdb.io/Y7mPFggX4RtGg4v2iPmjf5/migration_${CIRCLE_WORKFLOW_ID:0:7}
             
       # Here's where you will add some code to   # If you are using kvdb.io, generate the bucket ID "9GE4jRtKznmVKRfvdBABBe" in your local terminal first
       - destroy-environment:
@@ -256,10 +262,10 @@ jobs:
             # your code here
             yum install -y tar gzip
             yum install -y awscli
-            yum install wget
+            yum install -y wget
             wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
             ls
-            yum install epel-release-latest-7.noarch.rpm
+            yum install -y epel-release-latest-7.noarch.rpm
             yum update -y
   
             yum install -y ansible
