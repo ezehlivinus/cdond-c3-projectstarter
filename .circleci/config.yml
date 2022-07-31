@@ -32,7 +32,17 @@ commands:
             export WORKFLOW_ID=<< parameters.WORKFLOW_ID >>
             aws cloudformation delete-stack --stack-name udapeople-backend-${WORKFLOW_ID}
             aws cloudformation delete-stack --stack-name udapeople-frontend-${WORKFLOW_ID}
-            
+  
+  revert-migration:
+    description: Revert the database migration.
+    steps:
+      - run:
+          name: Revert database migration
+          when: on_fail
+          command: |
+            cd backend
+            npm run migrations:revert
+
 jobs:
   build-frontend:
     docker:
@@ -230,7 +240,8 @@ jobs:
             
       # Here's where you will add some code to   # If you are using kvdb.io, generate the bucket ID "9GE4jRtKznmVKRfvdBABBe" in your local terminal first
       - destroy-environment:
-          WORKFLOW_ID: ${CIRCLE_WORKFLOW_ID:0:7}      
+          WORKFLOW_ID: ${CIRCLE_WORKFLOW_ID:0:7}  
+      - revert-migration  
 
   deploy-frontend:
     docker:
@@ -245,10 +256,12 @@ jobs:
             # your code here
             yum install -y tar gzip
             yum install -y awscli
-            yum install -y nodejs
-            yum install -y npm
             yum install -y ansible
             yum install -y python3
+            curl --silent --location https://rpm.nodesource.com/setup_16.x | bash -
+            yum -y install nodejs
+            yum install -y nodejs
+            yum install -y npm
       - attach_workspace:
           name: Attach ansible/circleci directory/workspace
           at: ~/
