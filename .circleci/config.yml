@@ -239,10 +239,12 @@ jobs:
             # update ca certificates
             sudo update-ca-certificates
             export WORKFLOW_ID=${CIRCLE_WORKFLOW_ID:0:7}
-            if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
+            cd backend
+            if grep -q "has been executed successfully." ./migrations_dump.txt
             then
-                # If you are using kvdb.io, generate the bucket ID "9GE4jRtKznmVKRfvdBABBe" in your local terminal first
+                # If you are using kvdb.io, generate the bucket ID in your local terminal first
                 curl https://kvdb.io/Y7mPFggX4RtGg4v2iPmjf5/migration_${WORKFLOW_ID}  -d '1'
+                echo '$WORKFLOW_ID it worked'
             fi
       - run:
           name: Return migration results to CircleCI
