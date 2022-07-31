@@ -256,10 +256,16 @@ jobs:
             # your code here
             yum install -y tar gzip
             yum install -y awscli
+
+            wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+            ls
+            yum install epel-release-latest-7.noarch.rpm
+            yum update -y
+  
             yum install -y ansible
             yum install -y python3
-            curl --silent --location https://rpm.nodesource.com/setup_16.x | bash -
-            yum -y install nodejs
+            # curl --silent --location https://rpm.nodesource.com/setup_16.x | bash -
+            # yum -y install nodejs
             yum install -y nodejs
             yum install -y npm
       - attach_workspace:
