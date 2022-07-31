@@ -239,19 +239,19 @@ jobs:
     steps:
       # Checkout code from git
       - checkout
-      - attach_workspace:
-          name: Attach ansible/circleci directory/workspace
-          at: ~/
       - run:
           name: Install dependencies
           command: |
             # your code here
+            yum install -y tar gzip
             yum install -y awscli
             yum install -y nodejs
             yum install -y npm
             yum install -y ansible
             yum install -y python3
-            yum install -y tar gzip
+      - attach_workspace:
+          name: Attach ansible/circleci directory/workspace
+          at: ~/
       - run:
           name: Get backend url
           command: |
