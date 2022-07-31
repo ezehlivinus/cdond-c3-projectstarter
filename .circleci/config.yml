@@ -241,12 +241,12 @@ jobs:
             if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
             then
                 # If you are using kvdb.io, generate the bucket ID "9GE4jRtKznmVKRfvdBABBe" in your local terminal first
-                curl https://kvdb.io/Y7mPFggX4RtGg4v2iPmjf5/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
+                curl https://kvdb.io/Y7mPFggX4RtGg4v2iPmjf5/migration_$\{CIRCLE_WORKFLOW_ID:0:7\}  -d '1'
             fi
       - run:
           name: Return migration results to CircleCI
           command: |
-            curl https://kvdb.io/Y7mPFggX4RtGg4v2iPmjf5/migration_${CIRCLE_WORKFLOW_ID:0:7}
+            curl https://kvdb.io/Y7mPFggX4RtGg4v2iPmjf5/migration_$\{CIRCLE_WORKFLOW_ID:0:7\}
             
       # Here's where you will add some code to   # If you are using kvdb.io, generate the bucket ID "9GE4jRtKznmVKRfvdBABBe" in your local terminal first
       - destroy-environment:
@@ -263,7 +263,7 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            # your code here
+            your code here
             yum install -y tar gzip
             yum install -y awscli
             yum install -y wget
@@ -276,8 +276,9 @@ jobs:
             yum install -y python3
             # curl --silent --location https://rpm.nodesource.com/setup_16.x | bash -
             # yum -y install nodejs
-            yum install -y nodejs
-            yum install -y npm
+            yum install -y nodejs@14
+            # yum install -y npm@
+            npm --version
       - attach_workspace:
           name: Attach ansible/circleci directory/workspace
           at: ~/
