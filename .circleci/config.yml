@@ -230,9 +230,9 @@ jobs:
             cd backend
             npm install
             echo 'Now running migrations'
-            npm run migrations
-            # npm run migrations > migrations_dump.txt
-            # cat migrations_dump.txt
+            npm run migrations > migrations_dump.txt
+            echo 'Migrations ran' >> migrations_dump.txt
+            cat migrations_dump.txt
             echo 'Migrations done'
       - run:
           name: Send migration results to kvdb.io
@@ -243,15 +243,12 @@ jobs:
             cd backend
             if grep -q "has been executed successfully" ./migrations_dump.txt
             then
-              # If you are using kvdb.io, generate the bucket ID in your local terminal first
               curl https://kvdb.io/Y7mPFggX4RtGg4v2iPmjf5/migration_${WORKFLOW_ID}  -d '1'
-              curl https://kvdb.io/Y7mPFggX4RtGg4v2iPmjf5/test_one  -d 'one'
               echo '$WORKFLOW_ID it worked'
             else
-              echo "Number is Odd"
+              curl https://kvdb.io/Y7mPFggX4RtGg4v2iPmjf5/migration_${WORKFLOW_ID}  -d '1'
             fi
-            curl https://kvdb.io/Y7mPFggX4RtGg4v2iPmjf5/test_two  -d 'two'
-            echo '${WORKFLOW_ID} maybe it worked-_${WORKFLOW_ID}'
+            echo ${WORKFLOW_ID} maybe it worked-_${WORKFLOW_ID}
       - run:
           name: Return migration results to CircleCI
           command: |
@@ -322,7 +319,7 @@ jobs:
   deploy-backend:
     docker:
       # Docker image here that supports Ansible
-      - image: cimg/python:3.10.5-node:14.0.0-alpine
+      - image: cimg/python:3.8.6-node:14.0.0
     steps:
       # Checkout code from git
       - checkout
@@ -337,16 +334,30 @@ jobs:
           name: Install dependencies
           command: |
             # your code here
-            apk add --update ansible
-            yum install -y tar gzip
-            pip3 install awscli
-            yum install -y wget
+            sudo apt update
+            sudo apt upgrade -y
+            sudo apt install ansible -y
+            sudo apt install python3 -y
       - run:
           name: Deploy backend
           command: |
             # your code here
+            cd backend
+            npm install
+            npm run build
+            cd ..
+            # Zip the directory
+            tar -C backend -czvf artifact.tar.gz .
+            # Copy the artifact to the circleci directory ansible/roles/deploy/files
+            cp artifact.tar.gz ansible/roles/deploy/files
+            cd .circleci/ansible
+            echo "Contents  of the inventory.txt file is -------"
+            cat inventory.txt
+            ansible-playbook -i inventory.txt deploy-backend.yml
       # Here's where you will add some code to rollback on failure  
-
+      - destroy-environment:
+          WORKFLOW_ID: ${CIRCLE_WORKFLOW_ID:0:7}
+      - revert-migration
 
 workflows:
   default:
@@ -380,3 +391,4 @@ workflows:
       #     requires: [smoke-test]
       # - cleanup:
       #     requires: [cloudfront-update]
+
