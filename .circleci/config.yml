@@ -47,7 +47,7 @@ commands:
         type: string
     steps:
       - run:
-          name: Revert database migration
+          name: Revert (last) database migration
           when: on_fail
           command: |
             SUCCESS=$(curl --insecure  https://kvdb.io/Y7mPFggX4RtGg4v2iPmjf5/migration_<< parameters.WORKFLOW_ID >>)
@@ -434,6 +434,73 @@ jobs:
           WORKFLOW_ID: ${CIRCLE_WORKFLOW_ID:0:7}
       - revert-migration
 
+  cloudfront-update:
+    docker:
+      # Docker image here that supports AWS CLI
+      - image: amazon/aws-cli
+    steps:
+      # Checkout code from git
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            # your code here
+            yum install -y tar gzip
+
+      - run:
+          name: Update cloudfront distribution
+          command: |
+            # your code here
+            # Change the initial stack name, as applicable to you
+            aws cloudformation deploy \
+              --template-file .circleci/files/cloudfront.yml \
+              --stack-name InitialStack \
+              --parameter-overrides WorkflowID="udapeople-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --tags project=udapeople
+      # Here's where you will add some code to rollback on failure  
+      - destroy-environment:
+          WORKFLOW_ID: ${CIRCLE_WORKFLOW_ID:0:7}
+      - revert-migration
+
+
+  cleanup:
+    docker:
+      # Docker image here
+    steps:
+      # Checkout code from git
+      - run:
+          name: Get old stack workflow id
+          command: |
+            # your code here
+            # Fetch the Old workflow ID
+            export OldWorkflowID=$(aws cloudformation \
+              list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+                --no-paginate --output text)
+            echo OldWorkflowID: "${OldWorkflowID}"
+            echo CIRCLE_WORKFLOW_ID "${CIRCLE_WORKFLOW_ID:0:7}"
+            #put the list of stacks here
+            # Fetch the stack names          
+            export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
+              --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
+            echo Stack names: "${STACKS[@]}"
+
+      - run:
+          name: Remove old stacks and files
+          command: |
+            if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
+            then
+              # your code here
+              echo "Removing old stacks"
+              for stack in "${STACKS[@]}"
+              do
+                echo "Removing stack: ${stack}"
+                aws s3 rm "s3://udapeople-${OldWorkflowID}" --recursive
+                # aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
+                # aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
+                aws cloudformation delete-stack --stack-name ${stack}
+              done
+            fi
+            
 
 
 workflows:
