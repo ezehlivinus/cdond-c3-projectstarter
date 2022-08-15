@@ -30,14 +30,14 @@
   npm:
     name: pm2
     global: yes
-    # production: yes
-    state: present
+    production: yes
+    state: latest
   
 # extract the tar/zipped file
 - name: 'extract the tar/zipped file'
   become: true
   unarchive:
-    src: ~/project/artifact.tar.gz
+    src: /home/circleci/project/artifact.tar.gz
     dest: /home/ubuntu/backend-app
     remote_src: yes
     owner: ubuntu
