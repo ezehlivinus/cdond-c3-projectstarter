@@ -366,8 +366,6 @@ jobs:
             cd ..
             # Zip the directory
             tar -C backend -czvf artifact.tar.gz .
-            # Copy the artifact to the circleci directory ansible/roles/deploy/files
-            cp artifact.tar.gz ansible/roles/deploy/files
             cd .circleci/ansible
             echo "Contents  of the inventory.txt file is -------"
             cat inventory.txt
@@ -507,29 +505,29 @@ jobs:
 workflows:
   default:
     jobs:
-#       - build-frontend
-#       - build-backend
-#       - test-frontend:
-#           requires: [build-frontend]
-#       - test-backend:
-#           requires: [build-backend]
-#       - scan-backend:
-#           requires: [build-backend]
-#       - scan-frontend:
-#           requires: [build-frontend]
-#       - deploy-infrastructure:
-#           requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-#           # filters:
-#           #   branches:
-#           #     only: [test-feature-branch]
-#       - configure-infrastructure:
-#           requires: [deploy-infrastructure]
-#       - run-migrations:
-#           requires: [configure-infrastructure]
-#       - deploy-frontend:
-#           requires: [run-migrations]
-#       # - deploy-backend:
-      #     requires: [run-migrations]
+      - build-frontend
+      - build-backend
+      - test-frontend:
+          requires: [build-frontend]
+      - test-backend:
+          requires: [build-backend]
+      - scan-backend:
+          requires: [build-backend]
+      - scan-frontend:
+          requires: [build-frontend]
+      - deploy-infrastructure:
+          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+          # filters:
+          #   branches:
+          #     only: [test-feature-branch]
+      - configure-infrastructure:
+          requires: [deploy-infrastructure]
+      - run-migrations:
+          requires: [configure-infrastructure]
+      - deploy-frontend:
+          requires: [run-migrations]
+      - deploy-backend:
+          requires: [run-migrations]
       # - smoke-test:
       #     requires: [deploy-backend, deploy-frontend]
       # - cloudfront-update:

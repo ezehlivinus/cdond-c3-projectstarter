@@ -1,6 +1,6 @@
 ---
 
-- name: "configuration play." 
+- name: "configuration play: Deploy backend" 
   hosts: web
   user: ubuntu
   become: yes
@@ -13,14 +13,29 @@
     - ansible_stdout_callback: yaml
 
   pre_tasks:
-    - name: "extract the tar/zipped file"
-      become: true
-      unarchive:
-        src: /home/ubuntu/artifact.tar.gz
-        dest: /home/ubuntu/
-        remote_src: yes
-        owner: ubuntu
-        group: ubuntu
+    - name: "wait 600 seconds for target connection to become reachable/useable"
+      ansible.builtin.pause:
+        seconds: 600
+
+    - name: 'Install python for Ansible'
+      become: yes
+      raw: |
+        sudo apt update
+        sudo apt install -y python3
+  
+  environment:
+    - TYPEORM_CONNECTION: "{{ lookup('env', 'TYPEORM_CONNECTION')}}"
+    - TYPEORM_ENTITIES: "{{ lookup('env', 'TYPEORM_ENTITIES')}}"
+    - TYPEORM_HOST: "{{ lookup('env', 'TYPEORM_HOST')}}"
+    - TYPEORM_PORT: 5432
+    - TYPEORM_USERNAME: "{{ lookup('env', 'TYPEORM_USERNAME')}}"
+    - TYPEORM_PASSWORD: "{{ lookup('env', 'TYPEORM_PASSWORD')}}"
+    - TYPEORM_DATABASE: "{{ lookup('env', 'TYPEORM_DATABASE')}}"
+    - TYPEORM_MIGRATIONS: "{{ lookup('env', 'TYPEORM_MIGRATIONS')}}"
+    - TYPEORM_MIGRATIONS_DIR: "{{ lookup('env', 'TYPEORM_MIGRATIONS_DIR')}}"
+    - AWS_ACCESS_KEY_ID: "{{ lookup('env', 'AWS_ACCESS_KEY_ID')}}"
+    - AWS_SECRET_ACCESS_KEY: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY')}}"
+    - AWS_DEFAULT_REGION: "{{ lookup('env', 'AWS_DEFAULT_REGION')}}"
 
   roles:
     - deploy
