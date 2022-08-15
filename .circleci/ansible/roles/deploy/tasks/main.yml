@@ -57,9 +57,11 @@
   become: true
   shell: |
     cd /home/ubuntu/backend-app
+    npm cache clean --force
+    npm install
     # stop the app
     pm2 stop all
-    pm2 start npm -- start
+    pm2 start npm -- run start
   register: starting_app
 
 

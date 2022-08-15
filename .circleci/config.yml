@@ -59,6 +59,8 @@ commands:
                 sudo rm -rf node_modules
                 sudo rm package-lock.json
                 npm install
+                npm audit fix --force
+                npm audit fix --audit-level=critical
                 npm run migrations:revert
             fi  
             # cd backend
@@ -381,6 +383,7 @@ jobs:
             echo "Contents  of the inventory.txt file is -------"
             cat inventory.txt
             ansible-playbook -i inventory.txt deploy-backend.yml
+          no_output_timeout: 30m
       # Here's where you will add some code to rollback on failure  
       - destroy-environment:
           WORKFLOW_ID: ${CIRCLE_WORKFLOW_ID:0:7}
