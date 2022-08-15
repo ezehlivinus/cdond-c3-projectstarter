@@ -1,3 +1,8 @@
+- name: Make backend-app directory
+  file:
+    path: /home/ubuntu/backend-app
+    state: directory
+
 - name: 'update apt packages'
   become: yes
   apt:
