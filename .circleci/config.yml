@@ -349,16 +349,22 @@ jobs:
       - attach_workspace:
           name: Attach ansible/circleci directory/workspace
           at: ~/
+
+      - run:
+          name: upgrade packages and Install AWS CLI
+          command: |
+            sudo apt update
+            sudo apt upgrade -y
+            sudo apt install awscli -y
       - run:
           name: Install dependencies
           command: |
             # your code here
-            sudo apt update
-            sudo apt upgrade -y
+            sudo apt install -y curl tar gzip
             sudo apt install -y python3
             sudo apt install -y python3-pip
+            python3 -m pip install --upgrade pip
             pip3 install ansible
-            pip3 install awscli
       - run:
           name: Deploy backend
           command: |
