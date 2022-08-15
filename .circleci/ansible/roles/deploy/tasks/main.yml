@@ -39,16 +39,19 @@
   unarchive:
     src: /home/circleci/project/artifact.tar.gz
     dest: /home/ubuntu/backend-app
-    remote_src: yes
-    owner: ubuntu
-    group: ubuntu
+    # remote_src: yes
+    # owner: ubuntu
+    # group: ubuntu
 
 # install backend dependencies
 - name: 'install backend-app dependencies'
   become: true
-  npm:
-    path: /home/ubuntu/backend-app
-    state: present
+  shell: |
+    cd /home/ubuntu/backend-app
+    npm install
+  # npm:
+  #   path: /home/ubuntu/backend-app
+  #   state: present
 
 # stop the app
 # - name: 'stop the app'
@@ -61,13 +64,13 @@
 - name: 'start the app'
   become: true
   shell: |
-    cd /home/ubuntu/backend-app
-    npm cache clean --force
-    npm install
+    # cd /home/ubuntu/backend-app
+    # npm cache clean --force
+    # npm install
     # stop the app
     pm2 stop all
     pm2 start npm -- run start
-  register: starting_app
+  register: backend_app
 
 
 
