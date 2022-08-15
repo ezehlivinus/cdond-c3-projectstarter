@@ -55,6 +55,9 @@ commands:
             if (( $SUCCESS == 1 ));
             then
                 cd ~/project/backend
+                npm cache clean --force
+                sudo rm -rf node_modules
+                sudo rm package-lock.json
                 npm install
                 npm run migrations:revert
             fi  
@@ -230,7 +233,6 @@ jobs:
   run-migrations:
     docker:
       # Docker image here that supports NodeJS
-      # - image: circleci/node:14.0.0
       - image: cimg/node:14.0.0
 
     steps:
