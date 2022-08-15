@@ -277,7 +277,8 @@ jobs:
       # Here's where you will add some code to   # If you are using kvdb.io, generate the bucket ID "9GE4jRtKznmVKRfvdBABBe" in your local terminal first
       - destroy-environment:
           WORKFLOW_ID: ${CIRCLE_WORKFLOW_ID:0:7}  
-      - revert-migration  
+      - revert-migration:
+          WORKFLOW_ID: ${CIRCLE_WORKFLOW_ID:0:7}
 
   deploy-frontend:
     docker:
@@ -373,7 +374,8 @@ jobs:
       # Here's where you will add some code to rollback on failure  
       - destroy-environment:
           WORKFLOW_ID: ${CIRCLE_WORKFLOW_ID:0:7}
-      - revert-migration
+      - revert-migration:
+          WORKFLOW_ID: ${CIRCLE_WORKFLOW_ID:0:7}
 
   
   smoke-test:
@@ -430,7 +432,8 @@ jobs:
       # Here's where you will add some code to rollback on failure  
       - destroy-environment:
           WORKFLOW_ID: ${CIRCLE_WORKFLOW_ID:0:7}
-      - revert-migration
+      - revert-migration:
+          WORKFLOW_ID: ${CIRCLE_WORKFLOW_ID:0:7}
 
   cloudfront-update:
     docker:
@@ -458,7 +461,8 @@ jobs:
       # Here's where you will add some code to rollback on failure  
       - destroy-environment:
           WORKFLOW_ID: ${CIRCLE_WORKFLOW_ID:0:7}
-      - revert-migration
+      - revert-migration:
+          WORKFLOW_ID: ${CIRCLE_WORKFLOW_ID:0:7}
 
 
   cleanup:
