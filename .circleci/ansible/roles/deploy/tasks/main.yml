@@ -3,35 +3,35 @@
     path: /home/ubuntu/backend-app
     state: directory
 
-- name: 'update apt packages'
-  become: yes
-  apt:
-    update_cache: yes
+# - name: 'update apt packages'
+#   become: yes
+#   apt:
+#     update_cache: yes
 
-- name: 'upgrade packages'
-  become: yes
-  apt:
-    upgrade: yes
+# - name: 'upgrade packages'
+#   become: yes
+#   apt:
+#     upgrade: yes
 
-- name: remove dependencies that are no longer required
-  become: yes
-  apt:
-    autoremove: yes
+# - name: remove dependencies that are no longer required
+#   become: yes
+#   apt:
+#     autoremove: yes
 
-- name: 'install dependencies'
-  become: true
-  apt:
-    name: ['nodejs', 'npm', 'tar', 'gzip', 'python3']
-    state: latest
-    update_cache: yes
+# - name: 'install dependencies'
+#   become: true
+#   apt:
+#     name: ['nodejs', 'npm', 'tar', 'gzip', 'python3']
+#     state: latest
+#     update_cache: yes
 
-- name: "install pm2"
-  become: true
-  npm:
-    name: pm2
-    global: yes
-    production: yes
-    state: latest
+# - name: "install pm2"
+#   become: true
+#   npm:
+#     name: pm2
+#     global: yes
+#     production: yes
+#     state: latest
   
 # extract the tar/zipped file
 - name: 'extract the tar/zipped file'
@@ -64,13 +64,16 @@
 - name: 'start the app'
   become: true
   shell: |
-    # cd /home/ubuntu/backend-app
+    cd /home/ubuntu/backend-app
     # npm cache clean --force
     # npm install
     # stop the app
-    pm2 stop all
-    pm2 start npm -- run start
+    # pm2 stop all
+    pm2 start npm -- start
   register: backend_app
+
+- debug:
+    msg: "{{ backend_app.stdout_lines }}"
 
 
 
