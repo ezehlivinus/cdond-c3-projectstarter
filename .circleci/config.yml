@@ -401,23 +401,23 @@ jobs:
       # Lightweight Docker image 
       # - image: python:3.8-alpine
       # - image: cimg/python:3
-        - image: cimg/node:14.0.0
-        # - image: python:3.10-alpine
+        # - image: cimg/node:14.0.0
+        - image: python:3.10-alpine
     steps:
       # Checkout code from git
       - checkout
-      - run: sudo apt update -y
-      - run: sudo apt upgrade -y
-      - run:
-          name: Install dependencies
-          command: sudo apt install awscli -y
+      # - run: sudo apt update -y
+      # - run: sudo apt upgrade -y
       # - run:
       #     name: Install dependencies
-      #     command: |
-      #       # your code here
-      #       apk update
-      #       apk add --update curl nodejs
-      #       pip3 install awscli
+      #     command: sudo apt install awscli -y
+      - run:
+          name: Install dependencies
+          command: |
+            # your code here
+            apk update
+            apk add --update curl nodejs
+            pip3 install awscli
 
       - run:
           name: Backend smoke test.
