@@ -421,7 +421,8 @@ jobs:
             export API_URL="http://${BACKEND_IP}:3030"
             echo "The backend URL is ${API_URL}"
             # make a request to the backend
-            if curl "${API_URL}/api/status" | grep "ok"
+            sleep 30
+            if curl -s "${API_URL}/api/status" | grep "ok"
             then
                 return 0
             else
