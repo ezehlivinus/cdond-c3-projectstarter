@@ -394,9 +394,10 @@ jobs:
   smoke-test:
     docker:
       # Lightweight Docker image 
-      - image: python:3.8-alpine
+      # - image: python:3.8-alpine
       # - image: cimg/python:3.8.6
         # - image: cimg/node:14.0.0
+        - image: python:3.10-alpine
     steps:
       # Checkout code from git
       - checkout
@@ -406,13 +407,15 @@ jobs:
       #     name: Install dependencies
       #     command: sudo apt install awscli -y
       - run:
+          name: Sleeping for 60 seconds. Waiting for backend to come online
+          command: sleep 60
+      - run:
           name: Install dependencies
           command: |
             # your code here
             apk update
-            apk add --update curl
+            apk add --update curl nodejs
             pip3 install awscli
-            apk add --update nodejs
 
       - run:
           name: Backend smoke test.
@@ -431,9 +434,9 @@ jobs:
             # sleep 30
             if curl "${API_URL}/api/status" | grep "ok"
             then
-                exit 0
+                return 0
             else
-                exit 1
+                return 1
             fi
 
       - run:
@@ -443,12 +446,12 @@ jobs:
 
             export URL="http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website-us-east-1.amazonaws.com/#/employees"
             echo ${URL}   
-            if curl ${URL} | grep "Welcome"
+            if curl -s ${URL} | grep "Welcome"
             then
                 # Change this to 0 after the job fails
-              exit 1
+              return 1
             else
-              exit 1
+              return 1
             fi
       # Here's where you will add some code to rollback on failure  
       - destroy-environment:
