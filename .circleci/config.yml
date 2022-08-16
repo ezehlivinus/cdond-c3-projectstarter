@@ -27,6 +27,7 @@ commands:
     steps:
       - run:
           name: Delete files uploaded to S3
+          when: on_fail
           command: |
             export WORKFLOW_ID=<< parameters.WORKFLOW_ID >>
             aws s3 rm s3://udapeople-${WORKFLOW_ID} --recursive
