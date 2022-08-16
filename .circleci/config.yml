@@ -263,7 +263,8 @@ jobs:
             sudo update-ca-certificates
             export WORKFLOW_ID=${CIRCLE_WORKFLOW_ID:0:7}
             cd backend
-            if grep -q "has been executed successfully" ./migrations_dump.txt
+            # if grep -q "has been executed successfully" ./migrations_dump.txt
+            if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
             then
               curl https://kvdb.io/Y7mPFggX4RtGg4v2iPmjf5/migration_${WORKFLOW_ID}  -d '1'
               echo '$WORKFLOW_ID it worked'
@@ -395,27 +396,24 @@ jobs:
     docker:
       # Lightweight Docker image 
       # - image: python:3.8-alpine
-      # - image: cimg/python:3.8.6
-        # - image: cimg/node:14.0.0
-        - image: python:3.10-alpine
+      # - image: cimg/python:3
+        - image: cimg/node:14.0.0
+        # - image: python:3.10-alpine
     steps:
       # Checkout code from git
       - checkout
-      # - run: sudo apt update -y
-      # - run: sudo apt upgrade -y
-      # - run:
-      #     name: Install dependencies
-      #     command: sudo apt install awscli -y
-      - run:
-          name: Sleeping for 60 seconds. Waiting for backend to come online
-          command: sleep 60
+      - run: sudo apt update -y
+      - run: sudo apt upgrade -y
       - run:
           name: Install dependencies
-          command: |
-            # your code here
-            apk update
-            apk add --update curl nodejs
-            pip3 install awscli
+          command: sudo apt install awscli -y
+      # - run:
+      #     name: Install dependencies
+      #     command: |
+      #       # your code here
+      #       apk update
+      #       apk add --update curl nodejs
+      #       pip3 install awscli
 
       - run:
           name: Backend smoke test.
@@ -431,12 +429,12 @@ jobs:
             export API_URL="http://${BACKEND_IP}:3030"
             echo "The backend URL is ${API_URL}"
             # make a request to the backend
-            # sleep 30
+            sleep 60
             if curl "${API_URL}/api/status" | grep "ok"
             then
-                return 0
+                exit 0
             else
-                return 1
+                exit 1
             fi
 
       - run:
@@ -449,9 +447,9 @@ jobs:
             if curl -s ${URL} | grep "Welcome"
             then
                 # Change this to 0 after the job fails
-              return 1
+              exit 1
             else
-              return 1
+              exit 1
             fi
       # Here's where you will add some code to rollback on failure  
       - destroy-environment:
