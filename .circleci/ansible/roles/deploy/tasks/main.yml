@@ -3,15 +3,15 @@
     path: /home/ubuntu/backend-app
     state: directory
 
-# - name: 'update apt packages'
-#   become: yes
-#   apt:
-#     update_cache: yes
+- name: 'update apt packages'
+  become: yes
+  apt:
+    update_cache: yes
 
-# - name: 'upgrade packages'
-#   become: yes
-#   apt:
-#     upgrade: yes
+- name: 'upgrade packages'
+  become: yes
+  apt:
+    upgrade: yes
 
 # - name: remove dependencies that are no longer required
 #   become: yes
