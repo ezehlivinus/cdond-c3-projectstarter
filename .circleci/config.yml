@@ -402,9 +402,6 @@ jobs:
   smoke-test:
     docker:
       # Lightweight Docker image 
-      # - image: python:3.8-alpine
-      # - image: cimg/python:3
-        # - image: cimg/node:14.0.0
         - image: python:3.10-alpine
     steps:
       # Checkout code from git
@@ -418,9 +415,7 @@ jobs:
           name: Install dependencies
           command: |
             # your code here
-            apk update
-            apk add --update curl nodejs
-            pip3 install awscli
+            apk add --update --no-cache tar gzip nodejs npm curl aws-cli
 
       - run:
           name: Backend smoke test.
@@ -439,9 +434,9 @@ jobs:
             sleep 60
             if curl "${API_URL}/api/status" | grep "ok"
             then
-                exit 0
+                return 0
             else
-                exit 1
+                return 1
             fi
 
       - run:
@@ -454,9 +449,9 @@ jobs:
             if curl -s ${URL} | grep "Welcome"
             then
                 # Change this to 0 after the job fails
-              exit 1
+              return 1
             else
-              exit 1
+              return 1
             fi
       # Here's where you will add some code to rollback on failure  
       - destroy-environment:
