@@ -204,7 +204,7 @@ jobs:
 
   configure-infrastructure:
     docker:
-      - image: python:3.7-alpine
+      - image: python:3.7-alpine3.11
     steps:
       - checkout
       # Add ssh keys with fingerprint
@@ -217,8 +217,8 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --update ansible
-            pip3 install awscli
+            apk add --update --no-cache ansible tar gzip aws-cli
+            # pip3 install awscli
       # - run: 
       #     name: Configure Install other dependencies
       #     command: |
@@ -237,7 +237,8 @@ jobs:
   run-migrations:
     docker:
       # Docker image here that supports NodeJS
-      - image: cimg/node:16.0.0
+      - image: cimg/node:13.8.0
+      # - image: cimg/node:16.0.0
 
     steps:
       # Checkout code from git
@@ -348,7 +349,8 @@ jobs:
   deploy-backend:
     docker:
       # Docker image here that supports Ansible
-      - image: cimg/node:14.0.0
+      # - image: cimg/node:14.0.0
+      - image: cimg/node:13.8.0
     steps:
       # Checkout code from git
       - checkout
@@ -402,20 +404,21 @@ jobs:
   smoke-test:
     docker:
       # Lightweight Docker image 
-        - image: python:3.10-alpine
+        # - image: python:3.10-alpine
+        - image: cimg/node:13.8.0
     steps:
       # Checkout code from git
       - checkout
-      # - run: sudo apt update -y
-      # - run: sudo apt upgrade -y
-      # - run:
-      #     name: Install dependencies
-      #     command: sudo apt install awscli -y
+      - run: sudo apt update -y
+      - run: sudo apt upgrade -y
       - run:
           name: Install dependencies
-          command: |
-            # your code here
-            apk add --update --no-cache tar gzip nodejs npm curl aws-cli
+          command: sudo apt install awscli -y
+      # - run:
+      #     name: Install dependencies
+      #     command: |
+      #       # your code here
+      #       apk add --update --no-cache tar gzip nodejs npm curl aws-cli
 
       - run:
           name: Backend smoke test.
@@ -425,8 +428,8 @@ jobs:
             export BACKEND_IP=$(aws ec2 describe-instances \
               --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --query "Reservations[*].Instances[*].PublicIpAddress" \
-              --output text \
-              --region us-east-1)
+              --output text
+              # --region us-east-1)
             # Get backend url
             export API_URL="http://${BACKEND_IP}:3030"
             echo "The backend URL is ${API_URL}"
@@ -435,9 +438,9 @@ jobs:
             sleep 2m
             if curl "${API_URL}/api/status" | grep "ok"
             then
-                return 0
+                exit 0
             else
-                return 1
+                exit 1
             fi
 
       - run:
@@ -450,9 +453,9 @@ jobs:
             if curl -s ${URL} | grep "Welcome"
             then
                 # Change this to 0 after the job fails
-              return 1
+              exit 1
             else
-              return 1
+              exit 1
             fi
       # Here's where you will add some code to rollback on failure  
       - destroy-environment:
