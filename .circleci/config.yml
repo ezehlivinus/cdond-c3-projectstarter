@@ -348,8 +348,7 @@ jobs:
   deploy-backend:
     docker:
       # Docker image here that supports Ansible
-      # - image: cimg/node:14.0.0
-      - image: circleci/node:14.0.0
+      - image: cimg/node:14.0.0
     steps:
       # Checkout code from git
       - checkout
@@ -403,7 +402,7 @@ jobs:
   smoke-test:
     docker:
       # Lightweight Docker image 
-        - image: python:3.10-alpine
+        - image: python:3.8-alpine
     steps:
       # Checkout code from git
       - checkout
@@ -431,9 +430,10 @@ jobs:
             # Get backend url
             export API_URL="http://${BACKEND_IP}:3030"
             echo "The backend URL is ${API_URL}"
-            # make a request to the backend
-            # sleep 60
+            # Ping the backend
+            ping -c 3 ${BACKEND_IP}
             sleep 2m
+            # make a request to the backend
             if curl "${API_URL}/api/status" | grep "ok"
             then
                 return 0
