@@ -254,18 +254,13 @@ jobs:
             cd backend
             npm install
             echo 'Now running migrations'
-            # npm run migrations > migrations_dump.txt
-            npm run migrations
-            # cat migrations_dump.txt | grep 'Maybe No migrations were executed'
-            echo 'Migrations ran' >> migrations_dump.txt
+            npm run migrations > migrations_dump.txt
             cat migrations_dump.txt
-            # cat migrations_dump.txt | grep 'No migrations were executed'
             echo 'Migrations done'
             ls -a
       - run:
           name: Send migration results to kvdb.io
           command: |
-            # update ca certificates
             sudo update-ca-certificates
             export WORKFLOW_ID=${CIRCLE_WORKFLOW_ID:0:7}
             cd backend
@@ -280,13 +275,6 @@ jobs:
               curl https://kvdb.io/Y7mPFggX4RtGg4v2iPmjf5/migration_${WORKFLOW_ID}  -d '1'
             fi
             echo ${WORKFLOW_ID} maybe it worked-_${WORKFLOW_ID}
-      # - run:373401
-      #     name: Return migration results to CircleCI
-      #     command: |
-      #       export WORKFLOW_ID=${CIRCLE_WORKFLOW_ID:0:7}
-      #       curl https://kvdb.io/Y7mPFggX4RtGg4v2iPmjf5/migration_${WORKFLOW_ID}
-      #       echo $WORKFLOW_ID
-            
       # Here's where you will add some code to   # If you are using kvdb.io, generate the bucket ID "9GE4jRtKznmVKRfvdBABBe" in your local terminal first
       - destroy-environment:
           WORKFLOW_ID: ${CIRCLE_WORKFLOW_ID:0:7}  
@@ -435,8 +423,6 @@ jobs:
             # Get backend url
             export API_URL="http://${BACKEND_IP}:3030"
             echo "The backend URL is ${API_URL}"
-            # Ping the backend
-            # ping -c 3 ${BACKEND_IP}
             sleep 2m
             # make a request to the backend
             if curl "${API_URL}/api/status" | grep "ok"
@@ -461,10 +447,10 @@ jobs:
               return 1
             fi
       # Here's where you will add some code to rollback on failure  
-      - destroy-environment:
-          WORKFLOW_ID: ${CIRCLE_WORKFLOW_ID:0:7}
-      - revert-migration:
-          WORKFLOW_ID: ${CIRCLE_WORKFLOW_ID:0:7}
+      # - destroy-environment:
+      #     WORKFLOW_ID: ${CIRCLE_WORKFLOW_ID:0:7}
+      # - revert-migration:
+      #     WORKFLOW_ID: ${CIRCLE_WORKFLOW_ID:0:7}
 
   cloudfront-update:
     docker:
