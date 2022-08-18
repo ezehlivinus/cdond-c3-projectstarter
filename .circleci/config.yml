@@ -255,6 +255,8 @@ jobs:
             rm -rf node_modules
             rm package-lock.json
             npm install
+            npm audit fix --force
+            npm audit fix --audit-level=critical
             echo 'Now running migrations'
             npm run migrations > migrations_dump.txt
             cat migrations_dump.txt | grep 'Maybe No migrations were executed'
