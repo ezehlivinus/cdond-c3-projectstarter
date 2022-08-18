@@ -402,7 +402,7 @@ jobs:
   smoke-test:
     docker:
       # Lightweight Docker image 
-        - image: python:3.8-alpine
+        - image: python:3.8-alpine 
     steps:
       # Checkout code from git
       - checkout
