@@ -52,7 +52,7 @@ commands:
           when: on_fail
           command: |
             SUCCESS=$(curl --insecure  https://kvdb.io/Y7mPFggX4RtGg4v2iPmjf5/migration_<< parameters.WORKFLOW_ID >>)
-            echo $SUCCESS
+            echo "Response from kvdb is $SUCCESS"
             # Logic for reverting the database state
             if (( $SUCCESS == 1 ));
             then
@@ -237,7 +237,7 @@ jobs:
   run-migrations:
     docker:
       # Docker image here that supports NodeJS
-      - image: cimg/node:16.0.0
+      - image: cimg/node:18.7.0
 
     steps:
       # Checkout code from git
@@ -255,8 +255,10 @@ jobs:
             npm install
             echo 'Now running migrations'
             npm run migrations > migrations_dump.txt
+            cat migrations_dump.txt | grep 'Maybe No migrations were executed'
             echo 'Migrations ran' >> migrations_dump.txt
             cat migrations_dump.txt
+            cat migrations_dump.txt | grep 'No migrations were executed'
             echo 'Migrations done'
             ls -a
       - run:
@@ -269,9 +271,11 @@ jobs:
             # if grep -q "has been executed successfully" ./migrations_dump.txt
             if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
             then
+              echo 'Made a request to kvdb with the workflow id of: $WORKFLOW_ID '
               curl https://kvdb.io/Y7mPFggX4RtGg4v2iPmjf5/migration_${WORKFLOW_ID}  -d '1'
               echo '$WORKFLOW_ID it worked'
             else
+              echo 'The migration likely failed'
               curl https://kvdb.io/Y7mPFggX4RtGg4v2iPmjf5/migration_${WORKFLOW_ID}  -d '1'
             fi
             echo ${WORKFLOW_ID} maybe it worked-_${WORKFLOW_ID}
@@ -311,9 +315,6 @@ jobs:
             yum install -y python3
             curl --silent --location https://rpm.nodesource.com/setup_14.x | bash -
             yum install -y nodejs
-            # yum install -y npm@
-            node --version
-            npm --version
       - attach_workspace:
           name: Attach ansible/circleci directory/workspace
           at: ~/
