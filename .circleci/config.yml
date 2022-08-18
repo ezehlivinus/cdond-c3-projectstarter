@@ -237,7 +237,7 @@ jobs:
   run-migrations:
     docker:
       # Docker image here that supports NodeJS
-      - image: cimg/node:13.8.0
+      - image: cimg/node:14.0.0
 
     steps:
       # Checkout code from git
@@ -256,11 +256,12 @@ jobs:
             rm package-lock.json
             npm install
             echo 'Now running migrations'
-            npm run migrations > migrations_dump.txt
-            cat migrations_dump.txt | grep 'Maybe No migrations were executed'
+            # npm run migrations > migrations_dump.txt
+            npm run migrations
+            # cat migrations_dump.txt | grep 'Maybe No migrations were executed'
             echo 'Migrations ran' >> migrations_dump.txt
             cat migrations_dump.txt
-            cat migrations_dump.txt | grep 'No migrations were executed'
+            # cat migrations_dump.txt | grep 'No migrations were executed'
             echo 'Migrations done'
             ls -a
       - run:
