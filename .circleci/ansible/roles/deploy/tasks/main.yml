@@ -11,7 +11,7 @@
 
 - name: 'Where are we?'
   become: yes
-  shell: pwd && ls -la
+  shell: pwd && ls -la && echo 'May be we are here...'
   
 # extract the tar/zipped file
 - name: 'extract the tar/zipped file'
@@ -19,9 +19,9 @@
   unarchive:
     src: /home/ubuntu/artifact.tar.gz
     dest: /home/ubuntu/backend-app
-    # remote_src: yes
-    # owner: ubuntu
-    # group: ubuntu
+    remote_src: yes
+    owner: ubuntu
+    group: ubuntu
 
 # install backend dependencies
 - name: 'install backend-app dependencies'

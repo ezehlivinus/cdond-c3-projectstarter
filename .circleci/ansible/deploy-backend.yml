@@ -17,12 +17,12 @@
       ansible.builtin.pause:
         seconds: 600
 
-    - name: 'Install python for Ansible'
-      become: yes
-      shell: |
-        sudo apt update
-        sudo apt install -y python3
-        python3 --version
+    # - name: 'Install python for Ansible'
+    #   become: yes
+    #   shell: |
+    #     sudo apt update
+    #     sudo apt install -y python3
+    #     python3 --version
         
   environment:
     - TYPEORM_CONNECTION: "{{ lookup('env', 'TYPEORM_CONNECTION')}}"

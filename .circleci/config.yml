@@ -204,7 +204,8 @@ jobs:
 
   configure-infrastructure:
     docker:
-      - image: python:3.7-alpine
+      # - image: python:3.7-alpine
+      - image: python
     steps:
       - checkout
       # Add ssh keys with fingerprint
@@ -219,11 +220,6 @@ jobs:
           command: |
             apk add --update ansible
             pip3 install awscli
-      # - run: 
-      #     name: Configure Install other dependencies
-      #     command: |
-      #       cd .circleci/ansible
-      #       ansible-playbook -i inventory.txt playbook.yml
       - run:
           name: Configure server
           command: |
@@ -377,7 +373,6 @@ jobs:
             cd ..
             # Zip the directory
             tar -C backend -czvf artifact.tar.gz .
-            # cp artifact.tar.gz ~/project/ansible/circleci/files
             ls -a && pwd
             cd .circleci/ansible
             echo "Contents  of the inventory.txt file is -------"
