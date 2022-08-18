@@ -30,10 +30,10 @@
     cd /home/ubuntu/backend-app
     npm install
 
-- name: 'stop all running node processes'
-  become: true
-  ignore_errors: true
-  command: pm2 stop default
+# - name: 'stop all running node processes'
+#   become: true
+#   ignore_errors: true
+#   command: pm2 stop default # this 
     
 # start the app
 - name: 'start the app'
