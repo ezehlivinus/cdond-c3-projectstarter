@@ -373,6 +373,7 @@ jobs:
             sudo apt install -y curl tar gzip
             sudo apt install -y python3
             sudo apt install -y python3-pip
+            python3 --version
             python3 -m pip install --upgrade pip
             # pip3 install ansible
             python3 -m pip install ansible --user
@@ -402,21 +403,22 @@ jobs:
   smoke-test:
     docker:
       # Lightweight Docker image 
-        # - image: python:3.8-alpine 
-      - image: cimg/node:18.7.0
+        # - image: python:3.10-alpine
+        - image: python:3.7-alpine3.16
+      # - image: cimg/node:18.7.0
     steps:
       # Checkout code from git
       - checkout
-      - run: sudo apt update -y
-      - run: sudo apt upgrade -y
-      - run:
-          name: Install dependencies
-          command: sudo apt install awscli tar gzip curl -y
+      # - run: sudo apt update -y
+      # - run: sudo apt upgrade -y
       # - run:
       #     name: Install dependencies
-      #     command: |
-      #       # your code here
-      #       apk add --update --no-cache tar gzip nodejs npm curl aws-cli
+      #     command: sudo apt install awscli tar gzip curl -y
+      - run:
+          name: Install dependencies
+          command: |
+            # your code here
+            apk add --update --no-cache tar gzip nodejs npm curl aws-cli
 
       - run:
           name: Backend smoke test.
