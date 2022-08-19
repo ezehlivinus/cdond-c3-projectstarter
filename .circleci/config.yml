@@ -416,7 +416,7 @@ jobs:
               --output text \
               --region us-east-1)
             # Get backend url
-            export API_URL="http://${BACKEND_IP}:3030"
+            export API_URL="http://${BACKEND_IP}:4040"
             echo "The backend URL is ${API_URL}"
             sleep 2m
             # make a request to the backend
