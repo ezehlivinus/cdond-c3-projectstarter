@@ -240,7 +240,7 @@ jobs:
       - restore_cache:
           keys: [backend-build]
       - run:
-          name: Run migrations
+          name: Run migrationsls -a
           command: |
             echo 'Trying to run migrations'
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
@@ -267,7 +267,7 @@ jobs:
               echo '$WORKFLOW_ID it worked'
             else
               echo 'The migration likely failed'
-              curl https://kvdb.io/Y7mPFggX4RtGg4v2iPmjf5/migration_${WORKFLOW_ID}  -d '1'
+              curl https://kvdb.io/Y7mPFggX4RtGg4v2iPmjf5/migration_${WORKFLOW_ID}  -d '0'
             fi
             echo ${WORKFLOW_ID} maybe it worked-_${WORKFLOW_ID}
       # Here's where you will add some code to   # If you are using kvdb.io, generate the bucket ID "9GE4jRtKznmVKRfvdBABBe" in your local terminal first

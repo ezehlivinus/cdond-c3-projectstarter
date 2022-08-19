@@ -27,7 +27,7 @@
 - name: 'install dependencies'
   become: true
   apt:
-    name: ['tar', 'gzip', 'python3']
+    name: ['npm']
     state: latest
     update_cache: yes
 
