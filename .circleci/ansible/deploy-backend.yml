@@ -2,7 +2,7 @@
 - name: "configuration play: Deploy backend" 
   hosts: web
   user: ubuntu
-  become: yes
+  # become: yes
   # become_method: sudo
   # become_user: root
   gather_facts: false

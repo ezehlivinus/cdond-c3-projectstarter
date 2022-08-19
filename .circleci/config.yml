@@ -240,7 +240,7 @@ jobs:
       - restore_cache:
           keys: [backend-build]
       - run:
-          name: Run migrationsls -a
+          name: Run migrations -a
           command: |
             echo 'Trying to run migrations'
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
