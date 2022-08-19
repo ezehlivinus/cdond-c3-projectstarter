@@ -366,6 +366,20 @@ jobs:
           name: Deploy backend
           command: |
             # your code here
+
+            cat > backend/.env \<<- EOF
+            TYPEORM_CONNECTION=$TYPEORM_CONNECTION
+            TYPEORM_MIGRATIONS_DIR=$TYPEORM_MIGRATIONS_DIR
+            TYPEORM_ENTITIES=$TYPEORM_ENTITIES
+            TYPEORM_MIGRATIONS=$TYPEORM_MIGRATIONS
+            TYPEORM_HOST=$TYPEORM_HOST
+            TYPEORM_PORT=$TYPEORM_PORT
+            TYPEORM_USERNAME=$TYPEORM_USERNAME
+            TYPEORM_PASSWORD=$TYPEORM_PASSWORD
+            TYPEORM_DATABASE=$TYPEORM_DATABASE
+            EOF
+            cat backend/.env
+            
             cd backend
             npm install
             npm run build
