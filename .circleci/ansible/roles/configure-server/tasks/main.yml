@@ -13,10 +13,21 @@
   apt:
     autoremove: yes
 
+- name: 'install nodejs'
+  become: yes
+  shell: |
+    curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
+    sudo apt-get install -y nodejs
+    node --version
+    # nvm list-remote
+    # nvm install v14.17.6
+    # curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
+    # source ~/.bashrc
+
 - name: 'install dependencies'
   become: true
   apt:
-    name: ['nodejs', 'npm', 'tar', 'gzip', 'python3']
+    name: ['tar', 'gzip', 'python3']
     state: latest
     update_cache: yes
 
