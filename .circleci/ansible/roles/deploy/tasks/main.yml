@@ -3,11 +3,11 @@
     path: /home/ubuntu/backend-app
     state: directory
 
-- name: 'copy zipped file'
-  become: yes
-  copy:
-    src: /home/circleci/project/artifact.tar.gz
-    dest: /home/ubuntu/artifact.tar.gz
+# - name: 'copy zipped file'
+#   become: yes
+#   copy:
+#     src: /home/circleci/project/artifact.tar.gz
+#     dest: /home/ubuntu/artifact.tar.gz
 
 - name: 'Where are we?'
   become: yes
@@ -15,11 +15,9 @@
   
 # extract the tar/zipped file
 - name: 'extract the tar/zipped file'
-  become: true
   unarchive:
-    src: /home/ubuntu/artifact.tar.gz
+    src: /home/circleci/project/artifact.tar.gz
     dest: /home/ubuntu/backend-app
-    remote_src: yes
     # owner: ubuntu
     # group: ubuntu
 
