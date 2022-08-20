@@ -273,7 +273,7 @@ jobs:
               echo '$WORKFLOW_ID The migration worked'
             else
               echo 'The migration likely failed OR has already been run'
-              echo 'migrations_dump.txt's content is: '
+              echo "migrations_dump.txt's content is: "
               cat migrations_dump.txt
               curl https://kvdb.io/Y7mPFggX4RtGg4v2iPmjf5/migration_${WORKFLOW_ID}  -d '0'
             fi
