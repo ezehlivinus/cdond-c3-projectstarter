@@ -71,7 +71,8 @@ commands:
 jobs:
   build-frontend:
     docker:
-      - image: circleci/node:13.8.0
+      # - image: circleci/node:13.8.0
+      - image: cimg/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -88,7 +89,8 @@ jobs:
 
   build-backend:
     docker:
-      - image: circleci/node:13.8.0
+      # - image: circleci/node:13.8.0
+      - image: cimg/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -105,7 +107,8 @@ jobs:
 
   test-frontend:
     docker:
-      - image: circleci/node:13.8.0
+      # - image: circleci/node:13.8.0
+      - image: cimg/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -119,7 +122,8 @@ jobs:
       
   test-backend:
     docker:
-      - image: circleci/node:13.8.0
+      # - image: circleci/node:13.8.0
+      - image: cimg/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -133,7 +137,8 @@ jobs:
            
   scan-frontend:
     docker:
-      - image: circleci/node:13.8.0
+      # - image: circleci/node:13.8.0
+      - image: cimg/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -148,7 +153,8 @@ jobs:
 
   scan-backend:
     docker:
-      - image: circleci/node:13.8.0
+      # - image: circleci/node:13.8.0
+      - image: cimg/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -233,43 +239,42 @@ jobs:
   run-migrations:
     docker:
       # Docker image here that supports NodeJS
-      - image: cimg/node:14.0.0
+      - image: cimg/node:13.8.0
     steps:
       # Checkout code from git
       - checkout
       - restore_cache:
           keys: [backend-build]
       - run:
-          name: Run migrations -a
+          name: Install dependencies awscli and ca certificates
           command: |
-            echo 'Trying to run migrations'
+            sudo update-ca-certificates
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             unzip awscliv2.zip
             sudo ./aws/install
+      - run:
+          name: Run migrations
+          command: |
+            pwd
             cd backend
             npm install
-            echo 'Now running migrations'
             npm run migrations > migrations_dump.txt
             cat migrations_dump.txt
-            echo 'Migrations done'
-            ls -a
       - run:
           name: Send migration results to kvdb.io
           command: |
-            sudo update-ca-certificates
-            export WORKFLOW_ID=${CIRCLE_WORKFLOW_ID:0:7}
             cd backend
-            # if grep -q "has been executed successfully" ./migrations_dump.txt
-            if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
+            pwd
+            export WORKFLOW_ID=${CIRCLE_WORKFLOW_ID:0:7}
+            if grep -q "has been executed successfully." ./migrations_dump.txt
             then
-              echo 'Made a request to kvdb with the workflow id of: $WORKFLOW_ID '
+              echo 'Making request to kvdb with the workflow id of: ${WORKFLOW_ID} '
               curl https://kvdb.io/Y7mPFggX4RtGg4v2iPmjf5/migration_${WORKFLOW_ID}  -d '1'
-              echo '$WORKFLOW_ID it worked'
+              echo '$WORKFLOW_ID The migration worked'
             else
               echo 'The migration likely failed'
               curl https://kvdb.io/Y7mPFggX4RtGg4v2iPmjf5/migration_${WORKFLOW_ID}  -d '0'
             fi
-            echo ${WORKFLOW_ID} maybe it worked-_${WORKFLOW_ID}
       # Here's where you will add some code to   # If you are using kvdb.io, generate the bucket ID "9GE4jRtKznmVKRfvdBABBe" in your local terminal first
       - destroy-environment:
           WORKFLOW_ID: ${CIRCLE_WORKFLOW_ID:0:7}  
