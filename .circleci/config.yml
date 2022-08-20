@@ -272,7 +272,9 @@ jobs:
               curl https://kvdb.io/Y7mPFggX4RtGg4v2iPmjf5/migration_${WORKFLOW_ID}  -d '1'
               echo '$WORKFLOW_ID The migration worked'
             else
-              echo 'The migration likely failed'
+              echo 'The migration likely failed OR has already been run'
+              echo 'migrations_dump.txt's content is: '
+              cat migrations_dump.txt
               curl https://kvdb.io/Y7mPFggX4RtGg4v2iPmjf5/migration_${WORKFLOW_ID}  -d '0'
             fi
       # Here's where you will add some code to   # If you are using kvdb.io, generate the bucket ID "9GE4jRtKznmVKRfvdBABBe" in your local terminal first
@@ -338,7 +340,7 @@ jobs:
   deploy-backend:
     docker:
       # Docker image here that supports Ansible
-      - image: cimg/node:14.0.0
+      - image: cimg/node:13.8.0
     steps:
       # Checkout code from git
       - checkout
