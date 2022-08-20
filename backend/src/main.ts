@@ -43,7 +43,7 @@ async function bootstrap() {
       } else {
         callback(new Error('Not allowed by CORS'));
       }
-    },
+    }, 
   };
   app.use(cors(corsOptions));
   app.useGlobalFilters(new ErrorFilter());
