@@ -405,87 +405,87 @@ jobs:
       - revert-migration:
           WORKFLOW_ID: ${CIRCLE_WORKFLOW_ID:0:7}
 
-  deploy-prometheus-infrastructure:
-    docker:
-      - image: amazon/aws-cli
-    steps:
-      - checkout
-      - add_ssh_keys: 
-          fingerprints: ['60:60:a5:39:23:92:40:ed:5f:c7:8b:c3:9c:57:fb:64']
-      - run: yum install -y tar gzip
-      - run:
-        - name: Get and add prometheus Public IP into Ansible
-          command: |
-            export PROMETHEUS_IP=$(aws ec2 describe-instances \
-              --filters "Name=tag:Name,Values=project-3-section-4-instance" \
-              --query "Reservations[*].Instances[*].PublicIpAddress" \
-              --output text \
-              --region us-east-1)
-            echo "PROMETHEUS_IP = ${PROMETHEUS_IP}"
-            # check if Prometheus IP is empty
-            if [ -z "${PROMETHEUS_IP}" ]; then
-              echo "Prometheus IP is empty - exiting"
-              exit 1
-            fi
-            echo "${PROMETHEUS_IP}" >> .circleci/ansible/monitoring-inventory.txt
-            cat .circleci/ansible/inventory.txt
-      - run:
-        - name: Initialise Prometheus
-          command: |
-            cd .circleci/ansible
-            echo \
-            "global:
-              scrape_interval: 1s
-              evaluation_interval: 1s
-              external_labels:
-                monitor: "prometheus"
-            scrape_configs:
-              - job_name: "node"
-                ec2_sd_configs:
-                  - region: us-east-1
-                    access_key: ${AWS_ACCESS_KEY_ID}
-                    secret_key: ${AWS_SECRET_ACCESS_KEY}
-                    port: 9100" > ./roles/configure-prometheus-node-exporter/files/prometheus.yml
-            # ansible-playbook -i inventory.txt deploy-prometheus.yml
+  # deploy-prometheus-infrastructure:
+  #   docker:
+  #     - image: amazon/aws-cli
+  #   steps:
+  #     - checkout
+  #     - add_ssh_keys: 
+  #         fingerprints: ['60:60:a5:39:23:92:40:ed:5f:c7:8b:c3:9c:57:fb:64']
+  #     - run: yum install -y tar gzip
+  #     - run:
+  #       - name: Get and add prometheus Public IP into Ansible
+  #         command: |
+  #           export PROMETHEUS_IP=$(aws ec2 describe-instances \
+  #             --filters "Name=tag:Name,Values=project-3-section-4-instance" \
+  #             --query "Reservations[*].Instances[*].PublicIpAddress" \
+  #             --output text \
+  #             --region us-east-1)
+  #           echo "PROMETHEUS_IP = ${PROMETHEUS_IP}"
+  #           # check if Prometheus IP is empty
+  #           if [ -z "${PROMETHEUS_IP}" ]; then
+  #             echo "Prometheus IP is empty - exiting"
+  #             exit 1
+  #           fi
+  #           echo "${PROMETHEUS_IP}" >> .circleci/ansible/monitoring-inventory.txt
+  #           cat .circleci/ansible/inventory.txt
+  #     - run:
+  #       - name: Initialise Prometheus
+  #         command: |
+  #           cd .circleci/ansible
+  #           echo \
+  #           "global:
+  #             scrape_interval: 1s
+  #             evaluation_interval: 1s
+  #             external_labels:
+  #               monitor: "prometheus"
+  #           scrape_configs:
+  #             - job_name: "node"
+  #               ec2_sd_configs:
+  #                 - region: us-east-1
+  #                   access_key: ${AWS_ACCESS_KEY_ID}
+  #                   secret_key: ${AWS_SECRET_ACCESS_KEY}
+  #                   port: 9100" > ./roles/configure-prometheus-node-exporter/files/prometheus.yml
+  #           # ansible-playbook -i inventory.txt deploy-prometheus.yml
 
-      - persist_to_workspace:
-          name: Persist monitoring-inventory.txt and prometheus.yml to workspace
-          root: .
-          paths:
-            - .circleci/ansible/monitoring-inventory.txt
-            - .circleci/ansible/roles/configure-prometheus-node-exporter/files/prometheus.yml
+  #     - persist_to_workspace:
+  #         name: Persist monitoring-inventory.txt and prometheus.yml to workspace
+  #         root: .
+  #         paths:
+  #           - .circleci/ansible/monitoring-inventory.txt
+  #           - .circleci/ansible/roles/configure-prometheus-node-exporter/files/prometheus.yml
 
-  configure-prometheus-infrastructure:
-    docker:
-      - image: python:3.10-alpine
-    steps:
-      - checkout
-      - add_ssh_keys: 
-          fingerprints: ['60:60:a5:39:23:92:40:ed:5f:c7:8b:c3:9c:57:fb:64']
-      - attach_workspace:
-          name: Attach workspace
-          at: .
-      - run:
-        name: install tar and gzip
-          command: apk add --no-cache tar gzip
-      - run:
-        name: install ansible
-          command: |
-          apk add --update ansible
-          ansible --version
-      - run: 
-        name: Install dependencies
-          command: |
-            python3 --version
-            pip3 install awscli --upgrade --user
-      - run:
-        - name: Configure Prometheus server
-          command: |
-            pwd
-            cd .circleci/ansible
-            pwd
-            cat monitoring-inventory.txt
-            ansible-playbook -i monitoring-inventory.txt configure-prometheus.yml
+  # configure-prometheus-infrastructure:
+  #   docker:
+  #     - image: python:3.10-alpine
+  #   steps:
+  #     - checkout
+  #     - add_ssh_keys: 
+  #         fingerprints: ['60:60:a5:39:23:92:40:ed:5f:c7:8b:c3:9c:57:fb:64']
+  #     - attach_workspace:
+  #         name: Attach workspace
+  #         at: .
+  #     - run:
+  #       name: install tar and gzip
+  #         command: apk add --no-cache tar gzip
+  #     - run:
+  #       name: install ansible
+  #         command: |
+  #         apk add --update ansible
+  #         ansible --version
+  #     - run: 
+  #       name: Install dependencies
+  #         command: |
+  #           python3 --version
+  #           pip3 install awscli --upgrade --user
+  #     - run:
+  #       - name: Configure Prometheus server
+  #         command: |
+  #           pwd
+  #           cd .circleci/ansible
+  #           pwd
+  #           cat monitoring-inventory.txt
+  #           ansible-playbook -i monitoring-inventory.txt configure-prometheus.yml
   
   smoke-test:
     docker:
