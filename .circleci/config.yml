@@ -175,7 +175,7 @@ jobs:
       - checkout
       - run: yum install -y tar gzip
       - run:
-          name: Ensure back-end infrastructure exists --- Deploy backend infrastructure
+          name: Ensure back-end infrastructure exists => Deploy backend infrastructure
           command: |
             aws cloudformation deploy \
               --template-file .circleci/files/backend.yml \
@@ -184,7 +184,7 @@ jobs:
               --tags project=udapeople
       
       - run:
-          name: Ensure front-end infrastructure exist---Deploy frontend infrastructure
+          name: Ensure front-end infrastructure exist => Deploy frontend infrastructure
           command: |
             aws cloudformation deploy \
               --template-file .circleci/files/frontend.yml \
