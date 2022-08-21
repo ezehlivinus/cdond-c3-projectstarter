@@ -30,7 +30,15 @@ commands:
           when: on_fail
           command: |
             export WORKFLOW_ID=<< parameters.WORKFLOW_ID >>
-            aws s3 rm s3://udapeople-${WORKFLOW_ID} --recursive
+            # check if bucket exists for current WORKFLOW_ID
+            if aws s3api head-bucket --bucket udapeople-${WORKFLOW_ID} --region us-east-1 2>/dev/null
+            then
+              echo "Bucket exists: udapeople-${WORKFLOW_ID}"
+              aws s3 rm "s3://udapeople-${OLD_WORKFLOW_ID}" --recursive
+            else
+              echo "Bucket does not exist: No bucket to delete"
+            fi
+            # aws s3 rm s3://udapeople-${WORKFLOW_ID} --recursive
       
       - run:
           name: Destroy environments due to failure
