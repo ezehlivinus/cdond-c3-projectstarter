@@ -3,3 +3,6 @@ https://github.com/ezehlivinus/cdond-c3-projectstarter
 
 Frontend URL [URL02]
 http://udapeople-81d6136.s3-website-us-east-1.amazonaws.com/#/employees
+
+Cloudfront URL [URL03]
+http://d3fm7kkvkcux96.cloudfront.net

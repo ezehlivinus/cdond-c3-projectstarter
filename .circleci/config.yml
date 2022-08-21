@@ -619,7 +619,18 @@ jobs:
                   # your code here
                   echo "Removing old stacks"
                   echo "Removing stack: ${stack}"
-                  aws s3 rm "s3://udapeople-${OLD_WORKFLOW_ID}" --recursive
+
+                  # check if bucket exists for current OLD_WORKFLOW_ID
+                  if aws s3api head-bucket --bucket udapeople-${OLD_WORKFLOW_ID} --region us-east-1 2>/dev/null
+                  then
+                    echo "Bucket exists"
+                    # Delete the bucket
+                    # aws s3 rb s3://udapeople-${OLD_WORKFLOW_ID} --force
+                    aws s3 rm "s3://udapeople-${OLD_WORKFLOW_ID}" --recursive
+                  else
+                    echo "Bucket does not exist"
+                  fi
+
                   # aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
                   # aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
                   aws cloudformation delete-stack --stack-name ${stack}
